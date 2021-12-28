@@ -90,12 +90,11 @@ Need to add to project/targets/Build Phases/[CP-User] Run Flutter Build flutter_
 ## Usage
 Reference: https://docs.flutter.dev/development/add-to-app/ios/add-flutter-screen?tab=engine-swift-tab
 
-- [iOS](#ios)
+- [iOS](#ios-1)
 
 ## iOS
 
-- Create a FlutterEngine
-
+Create a FlutterEngine
 ``` swift
 import UIKit
 import Flutter
@@ -118,15 +117,14 @@ class AppDelegate: FlutterAppDelegate {
 }
 ```
 
-- Show a `FlutterViewController` with your FlutterEngine
-
+Show a `FlutterViewController` with your FlutterEngine
 ``` swift
 let engine = (UIApplication.shared.delegate as! AppDelegate).flutterEngine
 let vc = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
 present(vc, animated: true)
 ```
 
-- Send Data
+Send Data
 ``` swift
 let channel = FlutterMethodChannel(name: "com.wielun.chart/quote", binaryMessenger: vc.binaryMessenger)
 var jsonObject: [String: Any] = [:]
@@ -147,12 +145,5 @@ do {
 channel.invokeMethod("fromHostToChart", arguments: convertToString)
 
 ```
-
-Run Xcode
-
-```
-Failed to find assets path for "Frameworks/App.framework/flutter_assets"
-```
-
 
 ## Thank you ~
