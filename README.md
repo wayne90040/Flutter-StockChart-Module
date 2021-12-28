@@ -61,13 +61,65 @@ end
 $ pod install
 ```
 
+## How to Use
+
+### iOS
+Reference: https://docs.flutter.dev/development/add-to-app/ios/add-flutter-screen?tab=engine-swift-tab
+
+- Create a FlutterEngine
+
+``` swift
+import UIKit
+import Flutter
+import FlutterPluginRegistrant
+
+@UIApplicationMain
+class AppDelegate: FlutterAppDelegate {
+
+    lazy var flutterEngine = FlutterEngine(name: "flutter chart engine")
+
+    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        flutterEngine.run()
+        
+        GeneratedPluginRegistrant.register(with: flutterEngine)
+        
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+    
+    ...
+}
+```
+
+- Show a `FlutterViewController` with your FlutterEngine
+
+``` swift
+let engine = (UIApplication.shared.delegate as! AppDelegate).flutterEngine
+let vc = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
+present(vc, animated: true)
+```
+
+- Send Data
+``` swift
+let channel = FlutterMethodChannel(name: "com.wielun.chart/quote", binaryMessenger: vc.binaryMessenger)
+var jsonObject: [String: Any] = [:]
+jsonObject["open"] = [double ...]
+jsonObject["close"] = [double ...]
+jsonObject["high"] = [double ...
+jsonObject["low"] = [double ...]
+jsonObject["vol"] = [double ...]
+
+var convertToString: String?
+
+do {
+    let tmp = try JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted)
+    convertToString = String(data: tmp, encoding: .utf8)
+} catch _ {
+
+}
+channel.invokeMethod("fromHostToChart", arguments: convertToString)
+
+```
 
 
-
-
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.dev/).
-
-For instructions integrating Flutter modules to your existing applications,
-see the [add-to-app documentation](https://flutter.dev/docs/development/add-to-app).
+## Thank you ~
