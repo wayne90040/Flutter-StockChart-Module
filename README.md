@@ -1,25 +1,28 @@
 # Stock Chart
-### Multiplatform Stock Chart
+Multiplatform Stock Chart
 
+## Contents
 
-## How to Install
+- [Installation](#installation)
+- [Usage](#usage)
+
+## Installation
 Reference: https://docs.flutter.dev/development/add-to-app/ios/project-setup
 
+- [iOS](#ios)
+
 ## iOS 
-
 ### Method I - Embed with CocoaPods and the Flutter SDK
-> This method requires every developer working on your project to have a locally installed version of the Flutter SDK.
 
-
-
-- Download or Clone the project
-
-``` 
+#### ⚠️ **This method requires every developer working on your project to have a locally installed version of the Flutter SDK** ⚠️
+<br />
+  
+Download or Clone the project
+``` bash
 $ git clone https://github.com/wayne90040/Flutter-StockChart-Module.git
 ```
 
-- Following example assumes that your existing application and the Flutter module are in sibling directories.
-
+Following example assumes that your existing application and the Flutter module are in sibling directories.
 ```
 some/path/
 ├── Flutter-StockChart-Module/
@@ -28,16 +31,17 @@ some/path/
     └── Podfile
 ```
 
-- Add in `Podfile` 
+### Podfile
+If existing iOS App doesn’t already have a `Podfile`, follow the [CocoaPods getting started guide](https://guides.cocoapods.org/using/using-cocoapods.html) to add a Podfile to your project. 
+<br />
 
-1. Add the following lines to your Podfile:
-
+Add the following lines to your Podfile:
 ``` ruby
 flutter_application_path = '../Flutter-StockChart-Module'  # according to your clone file name
 load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 ```
 
-2. For each Podfile target that needs to embed Flutter, call `install_all_flutter_pods(flutter_application_path)`.
+For each Podfile target that needs to embed Flutter, call `install_all_flutter_pods(flutter_application_path)`.
 ``` ruby
 install_all_flutter_pods(flutter_application_path)
 ```
@@ -56,19 +60,19 @@ target 'ios-flutter-chart-example' do
   install_all_flutter_pods(flutter_application_path)
 end
 ```
-3. Run
-> Run `flutter pub get` first under flutter project
 
+Run
+> Run `flutter pub get` first under flutter project
 ```
 $ flutter pub get
 ```
 
-
 > Run  `pod install` under iOS project
-
 ```
 $ pod install
 ```
+
+---
 
 ### 🚨 Xcode 13
 ```
@@ -79,12 +83,16 @@ Need to add to project/targets/Build Phases/[CP-User] Run Flutter Build flutter_
 ```
 "$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh" embed_and_thin
 ```
+<p>
+  <img src="https://github.com/wayne90040/Flutter-StockChart-Module/blob/dev/Failed%20to%20find%20assets.png" width='50%' height='50%'/>
+</p>
 
-
-## How to Use
-
-### iOS
+## Usage
 Reference: https://docs.flutter.dev/development/add-to-app/ios/add-flutter-screen?tab=engine-swift-tab
+
+- [iOS](#ios)
+
+## iOS
 
 - Create a FlutterEngine
 
@@ -106,7 +114,6 @@ class AppDelegate: FlutterAppDelegate {
         
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
-    
     ...
 }
 ```
