@@ -2,10 +2,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stock_chart/quote.dart';
+import 'package:flutter_stock_chart/models/quote.dart';
 import 'package:flutter_stock_chart/extensions.dart';
 
-import 'chart_constants.dart';
+import '../chart_constants.dart';
 
 class MainPainter extends CustomPainter {
 

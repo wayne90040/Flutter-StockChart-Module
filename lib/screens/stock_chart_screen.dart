@@ -3,24 +3,21 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stock_chart/main_painter.dart';
-import 'package:flutter_stock_chart/quote.dart';
-import 'package:flutter_stock_chart/second_painter.dart';
+import 'package:flutter_stock_chart/painters/main_painter.dart';
+import 'package:flutter_stock_chart/models/quote.dart';
 import 'package:flutter_stock_chart/second_painter_type.dart';
-import 'package:flutter_stock_chart/stock_chart_view_model.dart';
+import 'package:flutter_stock_chart/viewmodels/stock_chart_view_model.dart';
+import 'package:flutter_stock_chart/widgets/main_chart_widget.dart';
+import 'package:flutter_stock_chart/widgets/second_chart_widget.dart';
 import 'package:provider/provider.dart';
 
-import 'chart_constants.dart';
+import '../chart_constants.dart';
 
 
 class StockChartScreen extends StatefulWidget {
-
-  static String routeName = "/stock_main_screen";
-
   @override
   _StockChartScreenState createState() => _StockChartScreenState();
 }
-
 
 class _StockChartScreenState extends State<StockChartScreen> {
 
@@ -121,72 +118,6 @@ class _StockChartScreenState extends State<StockChartScreen> {
                 )
             )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SecondChartWidget extends StatelessWidget {
-
-  const SecondChartWidget({
-    Key? key,
-    required this.quote,
-    required this.scale,
-    required this.scrollX,
-    required this.types,
-    required this.typeIndex,
-  }) : super(key: key);
-
-  final Quote quote;
-  final double scale;
-  final double scrollX;
-  final List<SecondPainterType> types;
-  final int typeIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 10),
-      child: CustomPaint(
-        painter: SecondPainter(
-            quote: quote,
-            scale: scale,
-            scrollX: scrollX,
-            isShowBorder: true,
-            type: types[typeIndex]
-        ),
-      ),
-    );
-  }
-}
-
-class MainChartWidget extends StatelessWidget {
-
-  const MainChartWidget({
-    Key? key,
-    required this.quote,
-    required this.scrollX,
-    required this.scale,
-  }) : super(key: key);
-
-  final Quote quote;
-  final double scrollX;
-  final double scale;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 10),
-      child: CustomPaint(
-        painter: MainPainter(
-            quote: quote,
-            scrollX: scrollX,
-            scale: scale,
-            isShowBorder: true,
-            isShowDate: true
         ),
       ),
     );

@@ -3,7 +3,7 @@
 
 import 'dart:math';
 
-import 'package:flutter_stock_chart/quote.dart';
+import 'package:flutter_stock_chart/models/quote.dart';
 
 
 class CalcManager {

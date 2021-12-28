@@ -1,8 +1,8 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:flutter_stock_chart/stock_chart_screen.dart';
-import 'package:flutter_stock_chart/stock_chart_view_model.dart';
+import 'package:flutter_stock_chart/screens/stock_chart_screen.dart';
+import 'package:flutter_stock_chart/viewmodels/stock_chart_view_model.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());

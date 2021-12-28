@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_stock_chart/calc_manager.dart';
-import 'package:flutter_stock_chart/quote.dart';
+import 'package:flutter_stock_chart/models/quote.dart';
 
 class StockChartViewModel extends ChangeNotifier {
 
@@ -20,7 +20,6 @@ class StockChartViewModel extends ChangeNotifier {
   
   StockChartViewModel({required this.data }) {
     platform.setMethodCallHandler(_receiveFromHost);
-    testReceiveFromHost();
   }
 
   void testReceiveFromHost() {

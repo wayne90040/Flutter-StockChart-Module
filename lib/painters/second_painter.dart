@@ -5,10 +5,10 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stock_chart/quote.dart';
+import 'package:flutter_stock_chart/models/quote.dart';
 import 'package:flutter_stock_chart/second_painter_type.dart';
 import 'package:flutter_stock_chart/extensions.dart';
-import 'chart_constants.dart';
+import '../chart_constants.dart';
 
 
 class SecondPainter extends CustomPainter {
