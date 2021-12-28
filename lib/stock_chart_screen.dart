@@ -53,54 +53,75 @@ class _StockChartScreenState extends State<StockChartScreen> {
     print("Quote${viewModel.quote}");
 
     return SafeArea(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 10),
+      child: Container(
+        child: Flex(
+          direction: Axis.vertical,
+          children: [
+            Expanded(
+                flex: 3,
+                child: GestureDetector(
+                  child: viewModel.quote == null ? Container() :
+                  MainChartWidget(quote: viewModel.quote!, scrollX: scrollX, scale: scale),
 
-          GestureDetector(
-            child: viewModel.quote == null ? Container() :
-              MainChartWidget(quote: viewModel.quote!, scrollX: scrollX, scale: scale),
+                  onHorizontalDragStart: (_ ) {
+                    // 水平移動開始
+                    isHorizontalDrag = true;
+                  },
+                  onHorizontalDragUpdate: (detail) {
+                    if (isScaling == true) return;
 
-            onHorizontalDragStart: (_ ) {
-              // 水平移動開始
-              isHorizontalDrag = true;
-            },
-            onHorizontalDragUpdate: (detail) {
-              if (isScaling == true) return;
+                    // 水平移動 更新 Chart
+                    // clamp 用於約束數字的範圍
+                    scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
+                    setState(() {
 
-              // 水平移動 更新 Chart
-              // clamp 用於約束數字的範圍
-              scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
-              setState(() {
+                    });
+                  },
+                  onHorizontalDragEnd: (_ ) {
+                    isHorizontalDrag = false;
+                  },
 
-              });
-            },
-            onHorizontalDragEnd: (_ ) {
-              isHorizontalDrag = false;
-            },
-
-            onScaleStart: (_ ) {
-              isScaling = true;
-            },
-          ),
-
-          SizedBox(height: 10),
-
-          GestureDetector(
-            child: (viewModel.quote == null) ? Container() :
-              SecondChartWidget(
-                  quote: viewModel.quote!,
-                  scale: scale,
-                  scrollX: scrollX,
-                  types: types,
-                  typeIndex: typeIndex),
-            onTap: () {
-              setState(() {
-                typeIndex = (typeIndex + 1) % types.length;
-              });
-            },
-          )
-        ],
+                  onScaleStart: (_ ) {
+                    isScaling = true;
+                  },
+                )
+            ),
+            Expanded(
+                flex: 1,
+                child: GestureDetector(
+                  child: (viewModel.quote == null) ? Container() :
+                  SecondChartWidget(
+                      quote: viewModel.quote!,
+                      scale: scale,
+                      scrollX: scrollX,
+                      types: types,
+                      typeIndex: typeIndex),
+                  onTap: () {
+                    setState(() {
+                      typeIndex = (typeIndex + 1) % types.length;
+                    });
+                  },
+                )
+            ),
+            Expanded(
+                flex: 1,
+                child: GestureDetector(
+                  child: (viewModel.quote == null) ? Container() :
+                  SecondChartWidget(
+                      quote: viewModel.quote!,
+                      scale: scale,
+                      scrollX: scrollX,
+                      types: types,
+                      typeIndex: typeIndex),
+                  onTap: () {
+                    setState(() {
+                      typeIndex = (typeIndex + 1) % types.length;
+                    });
+                  },
+                )
+            )
+          ],
+        ),
       ),
     );
   }
@@ -127,7 +148,6 @@ class SecondChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 200,
       margin: EdgeInsets.symmetric(horizontal: 10),
       child: CustomPaint(
         painter: SecondPainter(
@@ -159,7 +179,6 @@ class MainChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 300,
       margin: EdgeInsets.symmetric(horizontal: 10),
       child: CustomPaint(
         painter: MainPainter(
