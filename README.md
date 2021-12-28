@@ -56,10 +56,30 @@ target 'ios-flutter-chart-example' do
   install_all_flutter_pods(flutter_application_path)
 end
 ```
-3. Run `pod install`
+3. Run
+> Run `flutter pub get` first under flutter project
+
+```
+$ flutter pub get
+```
+
+
+> Run  `pod install` under iOS project
+
 ```
 $ pod install
 ```
+
+### 🚨 Xcode 13
+```
+Failed to find assets path for "Frameworks/App.framework/flutter_assets"
+```
+
+Need to add to project/targets/Build Phases/[CP-User] Run Flutter Build flutter_stock_chart Script
+```
+"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh" embed_and_thin
+```
+
 
 ## How to Use
 
@@ -119,6 +139,12 @@ do {
 }
 channel.invokeMethod("fromHostToChart", arguments: convertToString)
 
+```
+
+Run Xcode
+
+```
+Failed to find assets path for "Frameworks/App.framework/flutter_assets"
 ```
 
 
