@@ -5,6 +5,7 @@ Multiplatform Stock Chart
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Issue](#issue)
 
 ## Installation
 Reference: https://docs.flutter.dev/development/add-to-app/ios/project-setup
@@ -74,19 +75,6 @@ $ pod install
 
 ---
 
-### 🚨 Xcode 13
-```
-Failed to find assets path for "Frameworks/App.framework/flutter_assets"
-```
-
-Need to add to project/targets/Build Phases/[CP-User] Run Flutter Build flutter_stock_chart Script
-```
-"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh" embed_and_thin
-```
-<p>
-  <img src="https://github.com/wayne90040/Flutter-StockChart-Module/blob/dev/Failed%20to%20find%20assets.png" width='50%' height='50%'/>
-</p>
-
 ## Usage
 Reference: https://docs.flutter.dev/development/add-to-app/ios/add-flutter-screen?tab=engine-swift-tab
 
@@ -145,5 +133,40 @@ do {
 channel.invokeMethod("fromHostToChart", arguments: convertToString)
 
 ```
+
+## Issue
+
+Check flutter version 
+
+try 
+``` bash
+flutter clean
+```
+then 
+``` bash
+flutter run
+```
+
+#### Failed to find assets path for "Frameworks/App.framework/flutter_assets" 
+Need to add to `project/targets/Build Phases/[CP-User] Run Flutter Build flutter_stock_chart Script`
+```
+"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh" embed_and_thin
+```
+<p>
+  <img src="https://github.com/wayne90040/Flutter-StockChart-Module/blob/dev/Failed%20to%20find%20assets.png" width='50%' height='50%'/>
+</p>
+
+#### Flutter in iOS14 build on real device crash when stop Xcode connect
+> Change build mode to `release`
+or
+> Set `FLUTTER_BUILD_MODE` to `release` in `Build Settings/User-Defined`
+
+<p>
+  <img src="https://github.com/wayne90040/Flutter-StockChart-Module/blob/master/flutter-crash-iOS14.png" width='50%' height='50%'/>
+</p>
+
+
+
+
 
 ## Thank you ~
