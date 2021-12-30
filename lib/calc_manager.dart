@@ -12,11 +12,180 @@ class CalcManager {
   static final CalcManager instance = CalcManager._privateConstructor();
 
   void calc(Quote quote) {
-    calcMA(quote);
-    calcVolumeMA(quote);
-    calcMACD(quote);
-    calcKDJ(quote);
-    calcBOLL(quote);
+    calcAll(quote);
+  }
+
+  static void calcAll(Quote quote, [bool isLast = false]) {
+    print("calcAll");
+    // MA
+    double ma5 = 0.0, ma10 = 0.0, ma20 = 0.0, ma30 = 0.0;
+    // Volume MA
+    double ma5Vol = 0.0, ma10VOl = 0.0;
+    // MACD
+    double ema12 = 0, ema26 = 0, dif = 0, dea = 0, macd = 0;
+    // KDJ
+    double k = 0, d = 0;
+
+    int i = 0;
+    if (isLast && quote.open.length > 1) {
+      i = quote.open.length - 1;
+
+      int index = quote.open.length - 2;
+
+      ma5 = quote.ma5[index] * 5;
+      ma10 = quote.ma10[index] * 10;
+      ma20 = quote.ma20[index] * 20;
+      ma30 = quote.ma30[index] * 30;
+
+      ma5Vol = quote.ma5Vol[index] * 5;
+      ma10VOl = quote.ma10Vol[index] * 10;
+
+      dif = quote.dif[index];
+      dea = quote.dea[index];
+      macd = quote.macd[index];
+      ema12 = quote.ema12[index];
+      ema26 = quote.ema26[index];
+
+      k = quote.k[index];
+      d = quote.d[index];
+    }
+
+    for (; i < quote.open.length; i++) {
+
+      final close = quote.close[i].toDouble();
+
+      // MA
+      ma5 += close;
+      ma10 += close;
+      ma20 += close;
+      ma30 += close;
+
+      // Volume MA
+      ma5Vol += quote.volume[i];
+      ma10VOl += quote.volume[i];
+
+      // MA, Volume MA
+      if (i == 4) {
+        quote.ma5.add(ma5 / 5);
+        quote.ma5Vol.add(ma5Vol / 5);
+      } else if (i > 4) {
+
+        ma5 -= quote.close[i - 5];
+        quote.ma5.add(ma5 / 5);
+
+        ma5Vol -= quote.volume[i - 5];
+        quote.ma5Vol.add(ma5Vol / 5);
+      }  else {
+        quote.ma5.add(0);
+        quote.ma5Vol.add(0);
+      }
+
+      if (i == 9) {
+        quote.ma10.add(ma10 / 10);
+        quote.ma10Vol.add(ma10VOl / 10);
+      } else if (i > 9) {
+        ma10 -= quote.close[i - 10];
+        quote.ma10.add(ma10 / 10);
+
+        ma10VOl -= quote.volume[i - 10];
+        quote.ma10Vol.add(ma10VOl / 10);
+      }  else {
+        quote.ma10.add(0);
+        quote.ma10Vol.add(0);
+      }
+
+      if (i == 19) {
+        quote.ma20.add(ma20 / 20);
+      } else if (i > 19) {
+        ma20 -= quote.close[i - 20];
+        quote.ma20.add(ma20 / 20);
+      }  else {
+        quote.ma20.add(0);
+      }
+
+      if (i == 29) {
+        quote.ma30.add(ma30 / 30);
+      } else if (i > 29) {
+        ma30 -= quote.close[i - 30];
+        quote.ma30.add(ma30 / 30);
+      }  else {
+        quote.ma30.add(0);
+      }
+
+      // MACD
+      //  EMA（12） = 前一日EMA（12） X 11/13 + 今日收盘价 X 2/13
+      ema12 = i == 0 ? close : ema12 * 11 / 13 + close * 2 / 13;
+
+      // EMA（26） = 前一日EMA（26） X 25/27 + 今日收盘价 X 2/27
+      ema26 = i == 0 ? close : ema26 * 25 / 27 + close * 2 / 27;
+
+      // DIF = EMA（12） - EMA（26）
+      dif = ema12 - ema26;
+      // 今日DEA = （前一日DEA X 8/10 + 今日DIF X 2/10）
+      dea = dea * 8 / 10 + dif * 2 / 10;
+      // 用（DIF-DEA）*2 即为MACD柱状图。
+      macd = (dif - dea) * 2;
+      quote.dif.add(dif);
+      quote.dea.add(dea);
+      quote.macd.add(macd);
+      quote.ema12.add(ema12);
+      quote.ema26.add(ema26);
+
+      // KDJ
+      int startIndex = i - 13 < 0 ? 0 : i - 13;
+      double max14 = -double.maxFinite, min14 = double.maxFinite;
+
+      for (int j = startIndex; j <= i; j ++) {
+        max14 = max(max14, quote.high[j].toDouble());
+        min14 = min(min14, quote.low[j].toDouble());
+      }
+
+      double rsv = 100 * (close - min14) / (max14 - min14);
+      if (rsv.isNaN) rsv = 0;
+
+      if (i == 0) {
+        k = 50;
+        d = 50;
+      } else {
+        k = (rsv + 2 * k) / 3;
+        d = (k + 2 * d) / 3;
+      }
+      if (i < 13) {
+        quote.k.add(0.0);
+        quote.d.add(0.0);
+        quote.j.add(0.0);
+      } else if (i == 13 || i == 14) {
+        quote.k.add(k);
+        quote.d.add(0.0);
+        quote.j.add(0.0);
+      } else {
+        quote.k.add(k);
+        quote.d.add(d);
+        quote.j.add(3 * k - 2 * d);
+      }
+
+      // BOLL
+      if (i < 19) {
+        quote.mb.add(0.0);
+        quote.up.add(0.0);
+        quote.dn.add(0.0);
+      } else {
+        int n = 20;
+        double md = 0.0;
+
+        for (int j = i - n + 1; j <= i; j++) {
+          double c = quote.close[j].toDouble();
+          double m = quote.ma20[i];
+          double value = c - m;
+          md += value * value;
+        }
+        md = md / (n - 1);
+        md = sqrt(md);
+        quote.mb.add(quote.ma20[i]);
+        quote.up.add(quote.mb[i] + 2 * md);
+        quote.dn.add(quote.mb[i] - 2 * md);
+      }
+    }
   }
 
   static void calcMA(Quote quote, [bool isLast = false]) {
