@@ -14,19 +14,26 @@ import '../chart_constants.dart';
 
 class StockChartScreen extends StatefulWidget {
   @override
-  _StockChartScreenState createState() => _StockChartScreenState();
+  State<StockChartScreen> createState() => _StockChartScreenState();
 }
 
 class _StockChartScreenState extends State<StockChartScreen> {
 
-  double scrollX = 0.0;  // 水平移動
-  bool isHorizontalDrag = false; // 偵測是否水平移動
-  bool isScaling = false; // 偵測是否縮放
-  double scale = 1.0, lastScale = 1.0;
-  int typeIndex = 0;
+  final GlobalKey<MainChartWidgetState> mainKey = GlobalKey();
 
-  GlobalKey<SecondChartWidgetState> secondKey = GlobalKey();
-  GlobalKey<SecondChartWidgetState> secondKey2 = GlobalKey();
+  final GlobalKey<SecondChartWidgetState> secondKey = GlobalKey();
+
+  final GlobalKey<SecondChartWidgetState> secondKey2 = GlobalKey();
+
+  double scrollX = 0.0;
+  // 水平移動
+  bool isHorizontalDrag = false;
+ // 偵測是否水平移動
+  bool isScaling = false;
+ // 偵測是否縮放
+  double scale = 1.0, lastScale = 1.0;
+
+  int typeIndex = 0;
 
   List<SecondPainterType> types = [
     SecondPainterType.VOL,
@@ -36,17 +43,14 @@ class _StockChartScreenState extends State<StockChartScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
 
     var viewModel = Provider.of<StockChartViewModel>(context, listen: false);
 
     double width = MediaQuery.of(context).size.width;
     double maxScrollX = (viewModel.maxCount - (width ~/ candleSpace)).abs() * candleSpace;
+
+    print("重新 Building");
 
     return SafeArea(
       child: Container(
@@ -58,20 +62,19 @@ class _StockChartScreenState extends State<StockChartScreen> {
               flex: 3,
               child: GestureDetector(
                 child: viewModel.quote == null ? Container() :
-                MainChartWidget(quote: viewModel.quote!, scrollX: scrollX, scale: scale),
-
+                MainChartWidget(
+                    key: mainKey,
+                    quote: viewModel.quote!),
                 onHorizontalDragStart: (_ ) {
                   // 水平移動開始
                   isHorizontalDrag = true;
                 },
                 onHorizontalDragUpdate: (detail) {
                   if (isScaling == true) return;
-
                   // 水平移動 更新 Chart
                   // clamp 用於約束數字的範圍
-                  setState(() {
-                    scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
-                  });
+                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
+                  _notifyScrollXChange();
                 },
                 onHorizontalDragEnd: (_ ) {
                   isHorizontalDrag = false;
@@ -81,9 +84,8 @@ class _StockChartScreenState extends State<StockChartScreen> {
                 },
                 onScaleUpdate: (details) {
                   if (isHorizontalDrag) return;
-                  setState(() {
-                    scale = (lastScale * details.scale).clamp(0.5, 2.2);
-                  });
+                  scale = (lastScale * details.scale).clamp(0.5, 2.2);
+                  _notifyScaleChange();
                 },
                 onScaleEnd: (_) {
                   isScaling = false;
@@ -98,8 +100,6 @@ class _StockChartScreenState extends State<StockChartScreen> {
                 SecondChartWidget(
                     key: secondKey,
                     quote: viewModel.quote!,
-                    scale: scale,
-                    scrollX: scrollX,
                     types: types),
                 onTap: () {
                   secondKey.currentState?.changeChart();
@@ -113,9 +113,8 @@ class _StockChartScreenState extends State<StockChartScreen> {
 
                   // 水平移動 更新 Chart
                   // clamp 用於約束數字的範圍
-                  setState(() {
-                    scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
-                  });
+                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
+                  _notifyScrollXChange();
                 },
                 onHorizontalDragEnd: (_ ) {
                   isHorizontalDrag = false;
@@ -125,9 +124,8 @@ class _StockChartScreenState extends State<StockChartScreen> {
                 },
                 onScaleUpdate: (details) {
                   if (isHorizontalDrag) return;
-                  setState(() {
-                    scale = (lastScale * details.scale).clamp(0.5, 2.2);
-                  });
+                  scale = (lastScale * details.scale).clamp(0.5, 2.2);
+                  _notifyScaleChange();
                 },
                 onScaleEnd: (_) {
                   isScaling = false;
@@ -142,20 +140,28 @@ class _StockChartScreenState extends State<StockChartScreen> {
                 SecondChartWidget(
                     key: secondKey2,
                     quote: viewModel.quote!,
-                    scale: scale,
-                    scrollX: scrollX,
                     types: types),
                 onTap: () {
                   secondKey2.currentState?.changeChart();
+                },
+                onHorizontalDragStart: (_ ) {
+                  isHorizontalDrag = true;
+                },
+                onHorizontalDragUpdate: (detail) {
+                  if (isScaling == true) return;
+                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
+                  _notifyScrollXChange();
+                },
+                onHorizontalDragEnd: (_ ) {
+                  isHorizontalDrag = false;
                 },
                 onScaleStart: (_) {
                   isScaling = true;
                 },
                 onScaleUpdate: (details) {
                   if (isHorizontalDrag) return;
-                  setState(() {
-                    scale = (lastScale * details.scale).clamp(0.5, 2.2);
-                  });
+                  scale = (lastScale * details.scale).clamp(0.5, 2.2);
+                  _notifyScaleChange();
                 },
                 onScaleEnd: (_) {
                   isScaling = false;
@@ -167,5 +173,17 @@ class _StockChartScreenState extends State<StockChartScreen> {
         ),
       ),
     );
+  }
+
+  void _notifyScrollXChange() {
+    mainKey.currentState?.scrolling(scrollX);
+    secondKey.currentState?.scrolling(scrollX);
+    secondKey2.currentState?.scrolling(scrollX);
+  }
+
+  void _notifyScaleChange() {
+    mainKey.currentState?.scaling(scale);
+    secondKey.currentState?.scaling(scale);
+    secondKey2.currentState?.scaling(scale);
   }
 }
