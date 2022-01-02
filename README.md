@@ -148,6 +148,8 @@ flutter run
 ```
 
 #### Failed to find assets path for "Frameworks/App.framework/flutter_assets" 
+or
+#### Library not loaded: @rpath/App.framework/App
 Need to add to `project/targets/Build Phases/[CP-User] Run Flutter Build flutter_stock_chart Script`
 ```
 "$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh" embed_and_thin
