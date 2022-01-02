@@ -28,10 +28,6 @@ class _StockChartScreenState extends State<StockChartScreen> {
   GlobalKey<SecondChartWidgetState> secondKey = GlobalKey();
   GlobalKey<SecondChartWidgetState> secondKey2 = GlobalKey();
 
-  ValueNotifier<int> _secondChartIndex = ValueNotifier(0);
-  ValueNotifier<int> _thirdChartIndex = ValueNotifier(0);
-
-
   List<SecondPainterType> types = [
     SecondPainterType.VOL,
     SecondPainterType.MACD,
@@ -46,8 +42,6 @@ class _StockChartScreenState extends State<StockChartScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    print("重新 Build");
 
     var viewModel = Provider.of<StockChartViewModel>(context, listen: false);
 
@@ -64,16 +58,12 @@ class _StockChartScreenState extends State<StockChartScreen> {
               flex: 3,
               child: GestureDetector(
                 child: viewModel.quote == null ? Container() :
-                  MainChartWidget(
-                      quote: viewModel.quote!,
-                      scrollX: scrollX,
-                      scale: scale),
+                MainChartWidget(quote: viewModel.quote!, scrollX: scrollX, scale: scale),
 
                 onHorizontalDragStart: (_ ) {
                   // 水平移動開始
                   isHorizontalDrag = true;
                 },
-
                 onHorizontalDragUpdate: (detail) {
                   if (isScaling == true) return;
 
@@ -105,17 +95,14 @@ class _StockChartScreenState extends State<StockChartScreen> {
               flex: 1,
               child: GestureDetector(
                 child: (viewModel.quote == null) ? Container() :
-                  ValueListenableBuilder(
-                    valueListenable: _secondChartIndex,
-                    builder: (BuildContext context, int value, Widget? child) =>
-                        SecondChartWidget(
-                            quote: viewModel.quote!,
-                            scale: scale,
-                            scrollX: scrollX,
-                            types: types,
-                            typeIndex: value)),
+                SecondChartWidget(
+                    key: secondKey,
+                    quote: viewModel.quote!,
+                    scale: scale,
+                    scrollX: scrollX,
+                    types: types),
                 onTap: () {
-                  _secondChartIndex.value = (_secondChartIndex.value + 1) % types.length;
+                  secondKey.currentState?.changeChart();
                 },
                 onHorizontalDragStart: (_ ) {
                   // 水平移動開始
@@ -152,38 +139,14 @@ class _StockChartScreenState extends State<StockChartScreen> {
               flex: 1,
               child: GestureDetector(
                 child: (viewModel.quote == null) ? Container() :
-                  ValueListenableBuilder(
-                      valueListenable: _thirdChartIndex,
-                      builder: (BuildContext context, int value, Widget? child) =>
-                          SecondChartWidget(
-                              key: secondKey2,
-                              quote: viewModel.quote!,
-                              scale: scale,
-                              scrollX: scrollX,
-                              types: types,
-                              typeIndex: value)
-                  ),
+                SecondChartWidget(
+                    key: secondKey2,
+                    quote: viewModel.quote!,
+                    scale: scale,
+                    scrollX: scrollX,
+                    types: types),
                 onTap: () {
-                  _thirdChartIndex.value = (_thirdChartIndex.value + 1) % types.length;
-                },
-
-                onHorizontalDragStart: (_ ) {
-                  // 水平移動開始
-                  isHorizontalDrag = true;
-                },
-
-                onHorizontalDragUpdate: (detail) {
-                  if (isScaling == true) return;
-
-                  // 水平移動 更新 Chart
-                  // clamp 用於約束數字的範圍
-                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
-                  setState(() {
-
-                  });
-                },
-                onHorizontalDragEnd: (_ ) {
-                  isHorizontalDrag = false;
+                  secondKey2.currentState?.changeChart();
                 },
                 onScaleStart: (_) {
                   isScaling = true;
