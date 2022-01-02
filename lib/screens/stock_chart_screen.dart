@@ -22,7 +22,7 @@ class _StockChartScreenState extends State<StockChartScreen> {
   double scrollX = 0.0;  // 水平移動
   bool isHorizontalDrag = false; // 偵測是否水平移動
   bool isScaling = false; // 偵測是否縮放
-  double scale = 1.0;
+  double scale = 1.0, lastScale = 1.0;
   int typeIndex = 0;
 
   GlobalKey<SecondChartWidgetState> secondKey = GlobalKey();
@@ -79,17 +79,25 @@ class _StockChartScreenState extends State<StockChartScreen> {
 
                   // 水平移動 更新 Chart
                   // clamp 用於約束數字的範圍
-                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
                   setState(() {
-
+                    scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
                   });
                 },
                 onHorizontalDragEnd: (_ ) {
                   isHorizontalDrag = false;
                 },
-
                 onScaleStart: (_ ) {
                   isScaling = true;
+                },
+                onScaleUpdate: (details) {
+                  if (isHorizontalDrag) return;
+                  setState(() {
+                    scale = (lastScale * details.scale).clamp(0.5, 2.2);
+                  });
+                },
+                onScaleEnd: (_) {
+                  isScaling = false;
+                  lastScale = scale;
                 },
               )
             ),
@@ -113,19 +121,30 @@ class _StockChartScreenState extends State<StockChartScreen> {
                   // 水平移動開始
                   isHorizontalDrag = true;
                 },
-
                 onHorizontalDragUpdate: (detail) {
                   if (isScaling == true) return;
 
                   // 水平移動 更新 Chart
                   // clamp 用於約束數字的範圍
-                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
                   setState(() {
-
+                    scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
                   });
                 },
                 onHorizontalDragEnd: (_ ) {
                   isHorizontalDrag = false;
+                },
+                onScaleStart: (_) {
+                  isScaling = true;
+                },
+                onScaleUpdate: (details) {
+                  if (isHorizontalDrag) return;
+                  setState(() {
+                    scale = (lastScale * details.scale).clamp(0.5, 2.2);
+                  });
+                },
+                onScaleEnd: (_) {
+                  isScaling = false;
+                  lastScale = scale;
                 },
               )
             ),
@@ -165,6 +184,19 @@ class _StockChartScreenState extends State<StockChartScreen> {
                 },
                 onHorizontalDragEnd: (_ ) {
                   isHorizontalDrag = false;
+                },
+                onScaleStart: (_) {
+                  isScaling = true;
+                },
+                onScaleUpdate: (details) {
+                  if (isHorizontalDrag) return;
+                  setState(() {
+                    scale = (lastScale * details.scale).clamp(0.5, 2.2);
+                  });
+                },
+                onScaleEnd: (_) {
+                  isScaling = false;
+                  lastScale = scale;
                 },
               )
             )
