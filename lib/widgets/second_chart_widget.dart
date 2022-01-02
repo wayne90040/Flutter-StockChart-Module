@@ -13,13 +13,15 @@ class SecondChartWidget extends StatefulWidget {
     required this.quote,
     required this.scale,
     required this.scrollX,
-    required this.types
+    required this.types,
+    required this.typeIndex,
   }) : super(key: key);
 
   final Quote quote;
   final double scale;
   final double scrollX;
   final List<SecondPainterType> types;
+  final int typeIndex;
 
 
   @override
@@ -28,7 +30,6 @@ class SecondChartWidget extends StatefulWidget {
 
 class SecondChartWidgetState extends State<SecondChartWidget> {
 
-  int typeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +43,9 @@ class SecondChartWidgetState extends State<SecondChartWidget> {
             scale: widget.scale,
             scrollX: widget.scrollX,
             isShowBorder: true,
-            type: widget.types[typeIndex]
+            type: widget.types[widget.typeIndex]
         ),
       ),
     );
-  }
-
-  void changeChart() {
-    setState(() {
-      typeIndex = (typeIndex + 1) % widget.types.length;
-    });
   }
 }

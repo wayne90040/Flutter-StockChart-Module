@@ -23,11 +23,14 @@ class _StockChartScreenState extends State<StockChartScreen> {
   bool isHorizontalDrag = false; // 偵測是否水平移動
   bool isScaling = false; // 偵測是否縮放
   double scale = 1.0;
-
   int typeIndex = 0;
 
   GlobalKey<SecondChartWidgetState> secondKey = GlobalKey();
   GlobalKey<SecondChartWidgetState> secondKey2 = GlobalKey();
+
+  ValueNotifier<int> _secondChartIndex = ValueNotifier(0);
+  ValueNotifier<int> _thirdChartIndex = ValueNotifier(0);
+
 
   List<SecondPainterType> types = [
     SecondPainterType.VOL,
@@ -44,6 +47,8 @@ class _StockChartScreenState extends State<StockChartScreen> {
   @override
   Widget build(BuildContext context) {
 
+    print("重新 Build");
+
     var viewModel = Provider.of<StockChartViewModel>(context, listen: false);
 
     double width = MediaQuery.of(context).size.width;
@@ -59,12 +64,16 @@ class _StockChartScreenState extends State<StockChartScreen> {
               flex: 3,
               child: GestureDetector(
                 child: viewModel.quote == null ? Container() :
-                MainChartWidget(quote: viewModel.quote!, scrollX: scrollX, scale: scale),
+                  MainChartWidget(
+                      quote: viewModel.quote!,
+                      scrollX: scrollX,
+                      scale: scale),
 
                 onHorizontalDragStart: (_ ) {
                   // 水平移動開始
                   isHorizontalDrag = true;
                 },
+
                 onHorizontalDragUpdate: (detail) {
                   if (isScaling == true) return;
 
@@ -88,15 +97,35 @@ class _StockChartScreenState extends State<StockChartScreen> {
               flex: 1,
               child: GestureDetector(
                 child: (viewModel.quote == null) ? Container() :
-                SecondChartWidget(
-                    key: secondKey,
-                    quote: viewModel.quote!,
-                    scale: scale,
-                    scrollX: scrollX,
-                    types: types),
+                  ValueListenableBuilder(
+                    valueListenable: _secondChartIndex,
+                    builder: (BuildContext context, int value, Widget? child) =>
+                        SecondChartWidget(
+                            quote: viewModel.quote!,
+                            scale: scale,
+                            scrollX: scrollX,
+                            types: types,
+                            typeIndex: value)),
                 onTap: () {
-                  secondKey.currentState?.changeChart();
-                  // typeIndex = (typeIndex + 1) % types.length;
+                  _secondChartIndex.value = (_secondChartIndex.value + 1) % types.length;
+                },
+                onHorizontalDragStart: (_ ) {
+                  // 水平移動開始
+                  isHorizontalDrag = true;
+                },
+
+                onHorizontalDragUpdate: (detail) {
+                  if (isScaling == true) return;
+
+                  // 水平移動 更新 Chart
+                  // clamp 用於約束數字的範圍
+                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
+                  setState(() {
+
+                  });
+                },
+                onHorizontalDragEnd: (_ ) {
+                  isHorizontalDrag = false;
                 },
               )
             ),
@@ -104,14 +133,38 @@ class _StockChartScreenState extends State<StockChartScreen> {
               flex: 1,
               child: GestureDetector(
                 child: (viewModel.quote == null) ? Container() :
-                SecondChartWidget(
-                    key: secondKey2,
-                    quote: viewModel.quote!,
-                    scale: scale,
-                    scrollX: scrollX,
-                    types: types),
+                  ValueListenableBuilder(
+                      valueListenable: _thirdChartIndex,
+                      builder: (BuildContext context, int value, Widget? child) =>
+                          SecondChartWidget(
+                              key: secondKey2,
+                              quote: viewModel.quote!,
+                              scale: scale,
+                              scrollX: scrollX,
+                              types: types,
+                              typeIndex: value)
+                  ),
                 onTap: () {
-                  secondKey2.currentState?.changeChart();
+                  _thirdChartIndex.value = (_thirdChartIndex.value + 1) % types.length;
+                },
+
+                onHorizontalDragStart: (_ ) {
+                  // 水平移動開始
+                  isHorizontalDrag = true;
+                },
+
+                onHorizontalDragUpdate: (detail) {
+                  if (isScaling == true) return;
+
+                  // 水平移動 更新 Chart
+                  // clamp 用於約束數字的範圍
+                  scrollX = ((detail.primaryDelta ?? 0.0) + scrollX).clamp(0.0, maxScrollX);
+                  setState(() {
+
+                  });
+                },
+                onHorizontalDragEnd: (_ ) {
+                  isHorizontalDrag = false;
                 },
               )
             )
