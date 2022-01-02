@@ -5,18 +5,22 @@ import 'package:flutter/cupertino.dart';
 import '../painters/main_painter.dart';
 import '../models/quote.dart';
 
-class MainChartWidget extends StatelessWidget {
+class MainChartWidget extends StatefulWidget {
 
   const MainChartWidget({
     Key? key,
     required this.quote,
-    required this.scrollX,
-    required this.scale,
   }) : super(key: key);
 
   final Quote quote;
-  final double scrollX;
-  final double scale;
+
+  @override
+  State<MainChartWidget> createState() => MainChartWidgetState();
+}
+
+class MainChartWidgetState extends State<MainChartWidget> {
+
+  double scrollX = 0, scale = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,7 @@ class MainChartWidget extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 10),
       child: CustomPaint(
         painter: MainPainter(
-            quote: quote,
+            quote: widget.quote,
             scrollX: scrollX,
             scale: scale,
             isShowBorder: true,
@@ -33,5 +37,17 @@ class MainChartWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void scrolling(double scrollX) {
+    setState(() {
+      this.scrollX = scrollX;
+    });
+  }
+
+  void scaling(double scale) {
+    setState(() {
+      this.scale = scale;
+    });
   }
 }

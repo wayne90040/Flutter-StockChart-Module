@@ -1,5 +1,7 @@
 
 
+import 'dart:core';
+
 import 'package:flutter/cupertino.dart';
 
 import '../models/quote.dart';
@@ -11,17 +13,11 @@ class SecondChartWidget extends StatefulWidget {
   const SecondChartWidget({
     Key? key,
     required this.quote,
-    required this.scale,
-    required this.scrollX,
-    required this.types,
-    required this.typeIndex,
+    required this.types
   }) : super(key: key);
 
   final Quote quote;
-  final double scale;
-  final double scrollX;
   final List<SecondPainterType> types;
-  final int typeIndex;
 
 
   @override
@@ -30,6 +26,8 @@ class SecondChartWidget extends StatefulWidget {
 
 class SecondChartWidgetState extends State<SecondChartWidget> {
 
+  int typeIndex = 0;
+  double scrollX = 0, scale = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +38,30 @@ class SecondChartWidgetState extends State<SecondChartWidget> {
       child: CustomPaint(
         painter: SecondPainter(
             quote: widget.quote,
-            scale: widget.scale,
-            scrollX: widget.scrollX,
+            scale: scale,
+            scrollX: scrollX,
             isShowBorder: true,
-            type: widget.types[widget.typeIndex]
+            type: widget.types[typeIndex]
         ),
       ),
     );
+  }
+
+  void changeChart() {
+    setState(() {
+      typeIndex = (typeIndex + 1) % widget.types.length;
+    });
+  }
+
+  void scrolling(double scrollX) {
+    setState(() {
+      this.scrollX = scrollX;
+    });
+  }
+
+  void scaling(double scale) {
+    setState(() {
+      this.scale = scale;
+    });
   }
 }
