@@ -1,6 +1,10 @@
 # Stock Chart
 Multiplatform Stock Chart
 
+<p>
+  <img src="https://github.com/wayne90040/Flutter-StockChart-Module/blob/master/sample.png" width='20%' height='20%'/>
+</p>
+
 ## Contents
 
 - [Installation](#installation)
